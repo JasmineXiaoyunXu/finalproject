@@ -1,0 +1,89 @@
+<html>
+<head>
+<meta charset="utf-8">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script type="text/javascript">
+	//$(function test(){
+	//	alert("test");
+	//	var trace={
+	//		x:[1,2,3,4],
+	//		y:[1,2,3,4],
+	//		typr:'lines'
+	//	};
+	//	var data=[trace]
+	//	Plotly.newPlot('demo',data);
+	//})
+		
+
+	function getGraph(nametarget){
+		//alert(nametarget)
+		var nameTarget_data=jQuery.parseJSON('{{nameTarget_data|safe}}');
+		//alert(nameTarget_data[nametarget][0])
+		//document.getElementById('graph').innerHTML=nameTarget_data;
+		var x_y=nameTarget_data[nametarget].split(',,')
+		//var testString="[1,2,3],,[2,3,4]"
+		//var x_y=testString.split(',,');
+		//alert(x_y);
+		//document.getElementById('graph').innerHTML=testString.split(',,');
+		//document.getElementById('graph');
+		var trace={
+			x:x_y[0].split(','),
+			y:x_y[1].split(','),
+			typr:'lines'
+		};
+		var data=[trace]
+		Plotly.newPlot('graph',data);
+		
+	}
+	
+	
+	//$(function test(){
+	//	try{
+	//		var nameTarget_data=jQuery.parseJSON('{{nameTarget_data|safe}}');
+	//		alert("test")
+	//	}catch(error){
+	//	alert(error.message);
+	//}
+	//})
+	
+
+	function getTarget(fileName){	
+		var name_target=jQuery.parseJSON('{{name_target|safe}}');					
+		var targets=name_target[fileName]
+		var m_targets='<button>'+targets+'</button>'
+		var botton_targets=''
+		for (target in targets){		
+			var nametarget=fileName+targets[target]
+			var botton_target="<button onclick=getGraph('"+nametarget+"')>"+targets[target]+"</button>";
+			botton_targets+=botton_target;
+		}
+		document.getElementById(fileName).innerHTML= botton_targets;			
+	}
+	
+
+</script>
+</head>
+<body>
+	<!--{{mzmlNames}}-->
+	<!--<i>{{data_table}}</i>-->
+	<!--dict1['a']-->
+
+<table>
+
+	{% for mzmlName in mzmlNames %}
+		<tr>
+			<!--<td>{{mzmlName}}</td>-->
+			<button onclick=getTarget("{{mzmlName}}")>{{mzmlName}}</button>
+			<p id="{{mzmlName}}"></p>
+			
+		</tr>
+	{% endfor %}	
+
+</table>
+
+<div id = 'graph'></div>
+<div id = 'demo'></div>
+	
+</body>
+</html>
